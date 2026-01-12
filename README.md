@@ -34,6 +34,25 @@ Agent Skills solve this by giving AI assistants **expert-level WordPress knowled
 
 ## Quick Start
 
+### Install globally for Claude Code
+
+```bash
+# Clone agent-skills
+git clone https://github.com/Automattic/agent-skills.git
+cd agent-skills
+
+# Build the distribution
+node shared/scripts/skillpack-build.mjs --clean
+
+# Install all skills globally (available across all projects)
+node shared/scripts/skillpack-install.mjs --global
+
+# Or install specific skills only
+node shared/scripts/skillpack-install.mjs --global --skills=wp-playground,wp-block-development
+```
+
+This installs skills to `~/.claude/skills/` where Claude Code will automatically discover them.
+
 ### Install into your repo
 
 ```bash
@@ -45,12 +64,26 @@ cd agent-skills
 node shared/scripts/skillpack-build.mjs --clean
 
 # Install into your WordPress project
-node shared/scripts/skillpack-install.mjs --dest=../your-wp-project --targets=codex,vscode
+node shared/scripts/skillpack-install.mjs --dest=../your-wp-project --targets=codex,vscode,claude
 ```
 
 This copies skills into:
 - `.codex/skills/` for OpenAI Codex
 - `.github/skills/` for VS Code / GitHub Copilot
+- `.claude/skills/` for Claude Code (project-level)
+
+### Available options
+
+```bash
+# List available skills
+node shared/scripts/skillpack-install.mjs --list
+
+# Dry run (preview without installing)
+node shared/scripts/skillpack-install.mjs --global --dry-run
+
+# Install specific skills to a project
+node shared/scripts/skillpack-install.mjs --dest=../my-repo --targets=claude --skills=wp-wpcli-and-ops
+```
 
 ### Manual installation
 

@@ -13,7 +13,7 @@ function usage() {
       "  - <out>/claude/.claude/skills/<skill>/SKILL.md",
       "",
       "Options:",
-      "  --targets    Comma-separated list of targets (codex, vscode, claude). Default: codex,vscode,claude",
+      "  --targets    Comma-separated list of targets (codex, vscode, claude). Default: codex,vscode",
       "  --skills     Comma-separated list of skill names to build. Default: all skills",
       "  --clean      Remove target directories before building",
       "",
@@ -25,7 +25,7 @@ function usage() {
 }
 
 function parseArgs(argv) {
-  const args = { out: "dist", targets: ["codex", "vscode", "claude"], skills: [], clean: false };
+  const args = { out: "dist", targets: ["codex", "vscode"], skills: [], clean: false };
   for (const a of argv) {
     if (a === "--help" || a === "-h") args.help = true;
     else if (a === "--clean") args.clean = true;

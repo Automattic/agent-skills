@@ -14,7 +14,7 @@ function usage() {
       "  --targets=<list>    Comma-separated targets: codex, vscode, claude, claude-global (default: codex,vscode)",
       "  --skills=<list>     Comma-separated skill names to install (default: all)",
       "  --mode=<mode>       'replace' (default) or 'merge'",
-      "  --global            Shorthand for --targets=claude-global (installs to ~/.claude/skills)",
+      "  --global            Shorthand for --targets=claude-global (cannot be used with --targets)",
       "  --dry-run           Show what would be installed without making changes",
       "  --list              List available skills and exit",
       "",
@@ -54,6 +54,8 @@ function parseArgs(argv) {
     list: false,
   };
 
+  let explicitTargets = false;
+
   for (const a of argv) {
     if (a === "--help" || a === "-h") args.help = true;
     else if (a === "--dry-run") args.dryRun = true;
@@ -61,13 +63,21 @@ function parseArgs(argv) {
     else if (a === "--list") args.list = true;
     else if (a.startsWith("--from=")) args.from = a.slice("--from=".length);
     else if (a.startsWith("--dest=")) args.dest = a.slice("--dest=".length);
-    else if (a.startsWith("--targets=")) args.targets = a.slice("--targets=".length).split(",").filter(Boolean);
+    else if (a.startsWith("--targets=")) {
+      args.targets = a.slice("--targets=".length).split(",").filter(Boolean);
+      explicitTargets = true;
+    }
     else if (a.startsWith("--skills=")) args.skills = a.slice("--skills=".length).split(",").filter(Boolean);
     else if (a.startsWith("--mode=")) args.mode = a.slice("--mode=".length);
     else {
       process.stderr.write(`Unknown arg: ${a}\n`);
       args.help = true;
     }
+  }
+
+  // Check for conflicting flags
+  if (args.global && explicitTargets) {
+    throw new Error("Cannot specify both --global and --targets. Use --global alone or specify --targets without --global.");
   }
 
   // --global is shorthand for --targets=claude-global

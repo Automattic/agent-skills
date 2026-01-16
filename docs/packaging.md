@@ -23,7 +23,7 @@ Outputs:
 
 - `node shared/scripts/skillpack-install.mjs --dest=../some-repo`
 
-By default, all three targets (codex, vscode, opencode) are installed. You can specify specific targets with `--targets=codex,vscode,opencode`.
+By default, all three targets (codex, vscode, opencode) are installed. You can specify specific targets with `--targets=` (e.g., `--targets=codex,opencode`).
 
 Install mode defaults to `replace` (it replaces only the skill directories it installs).
 

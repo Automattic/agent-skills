@@ -45,12 +45,13 @@ cd agent-skills
 node shared/scripts/skillpack-build.mjs --clean
 
 # Install into your WordPress project
-node shared/scripts/skillpack-install.mjs --dest=../your-wp-project --targets=codex,vscode
+node shared/scripts/skillpack-install.mjs --dest=../your-wp-project
 ```
 
 This copies skills into:
 - `.codex/skills/` for OpenAI Codex
 - `.github/skills/` for VS Code / GitHub Copilot
+- `.opencode/skill/` for OpenCode
 
 ### Manual installation
 

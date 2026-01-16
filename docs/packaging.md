@@ -14,13 +14,16 @@ Outputs:
 
 - `dist/codex/.codex/skills/*` (OpenAI Codex repo layout)
 - `dist/vscode/.github/skills/*` (VS Code / Copilot repo layout)
+- `dist/opencode/.opencode/skill/*` (OpenCode repo layout)
 
 ## Install into another repo
 
 1. Build dist (above).
 2. Install into a destination repo:
 
-- `node shared/scripts/skillpack-install.mjs --dest=../some-repo --targets=codex,vscode`
+- `node shared/scripts/skillpack-install.mjs --dest=../some-repo`
 
-By default, install mode is `replace` (it replaces only the skill directories it installs).
+By default, all three targets (codex, vscode, opencode) are installed. You can specify specific targets with `--targets=codex,vscode,opencode`.
+
+Install mode defaults to `replace` (it replaces only the skill directories it installs).
 

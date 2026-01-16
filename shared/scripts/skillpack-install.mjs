@@ -5,18 +5,18 @@ function usage() {
   process.stderr.write(
     [
       "Usage:",
-      "  node shared/scripts/skillpack-install.mjs --dest=<repo-root> [--from=dist] [--targets=codex,vscode] [--mode=replace|merge] [--dry-run]",
+      "  node shared/scripts/skillpack-install.mjs --dest=<repo-root> [--from=dist] [--targets=codex,vscode,opencode] [--mode=replace|merge] [--dry-run]",
       "",
       "Examples:",
       "  node shared/scripts/skillpack-build.mjs --clean",
-      "  node shared/scripts/skillpack-install.mjs --dest=../my-wp-repo --targets=codex,vscode",
+      "  node shared/scripts/skillpack-install.mjs --dest=../my-wp-repo --targets=codex,vscode,opencode",
       "",
     ].join("\n")
   );
 }
 
 function parseArgs(argv) {
-  const args = { from: "dist", dest: null, targets: ["codex", "vscode"], mode: "replace", dryRun: false };
+  const args = { from: "dist", dest: null, targets: ["codex", "vscode", "opencode"], mode: "replace", dryRun: false };
   for (const a of argv) {
     if (a === "--help" || a === "-h") args.help = true;
     else if (a === "--dry-run") args.dryRun = true;
@@ -88,14 +88,18 @@ function installTarget({ fromDir, destRepoRoot, target, mode, dryRun }) {
       ? path.join(fromDir, "codex", ".codex", "skills")
       : target === "vscode"
         ? path.join(fromDir, "vscode", ".github", "skills")
-        : null;
+        : target === "opencode"
+          ? path.join(fromDir, "opencode", ".opencode", "skill")
+          : null;
 
   const destSkillsRoot =
     target === "codex"
       ? path.join(destRepoRoot, ".codex", "skills")
       : target === "vscode"
         ? path.join(destRepoRoot, ".github", "skills")
-        : null;
+        : target === "opencode"
+          ? path.join(destRepoRoot, ".opencode", "skill")
+          : null;
 
   assert(srcSkillsRoot && destSkillsRoot, `Unknown target: ${target}`);
   assert(fs.existsSync(srcSkillsRoot), `Missing source skillpack dir: ${srcSkillsRoot}`);
@@ -133,7 +137,7 @@ function main() {
   const destRepoRoot = path.isAbsolute(args.dest) ? args.dest : path.join(repoRoot, args.dest);
 
   const targets = [...new Set(args.targets)];
-  for (const t of targets) assert(t === "codex" || t === "vscode", `Invalid target: ${t}`);
+  for (const t of targets) assert(t === "codex" || t === "vscode" || t === "opencode", `Invalid target: ${t}`);
   assert(args.mode === "replace" || args.mode === "merge", "mode must be 'replace' or 'merge'");
 
   for (const target of targets) {

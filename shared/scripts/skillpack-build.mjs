@@ -5,11 +5,12 @@ function usage() {
   process.stderr.write(
     [
       "Usage:",
-      "  node shared/scripts/skillpack-build.mjs [--out=dist] [--targets=codex,vscode] [--clean]",
+      "  node shared/scripts/skillpack-build.mjs [--out=dist] [--targets=codex,vscode,opencode] [--clean]",
       "",
       "Outputs:",
       "  - <out>/codex/.codex/skills/<skill>/SKILL.md",
       "  - <out>/vscode/.github/skills/<skill>/SKILL.md",
+      "  - <out>/opencode/.opencode/skill/<skill>/SKILL.md",
       "",
       "Notes:",
       "- Avoids symlinks (Codex ignores symlinked directories).",
@@ -19,7 +20,7 @@ function usage() {
 }
 
 function parseArgs(argv) {
-  const args = { out: "dist", targets: ["codex", "vscode"], clean: false };
+  const args = { out: "dist", targets: ["codex", "vscode", "opencode"], clean: false };
   for (const a of argv) {
     if (a === "--help" || a === "-h") args.help = true;
     else if (a === "--clean") args.clean = true;
@@ -91,6 +92,7 @@ function buildTarget({ repoRoot, outDir, target, skillDirs }) {
   const rootByTarget = {
     codex: path.join(outDir, "codex", ".codex", "skills"),
     vscode: path.join(outDir, "vscode", ".github", "skills"),
+    opencode: path.join(outDir, "opencode", ".opencode", "skill"),
   };
   const destSkillsRoot = rootByTarget[target];
   assert(destSkillsRoot, `Unknown target: ${target}`);
@@ -123,7 +125,7 @@ function main() {
 
   const targets = [...new Set(args.targets)];
   for (const t of targets) {
-    assert(t === "codex" || t === "vscode", `Invalid target: ${t}`);
+    assert(t === "codex" || t === "vscode" || t === "opencode", `Invalid target: ${t}`);
   }
 
   if (args.clean) {
@@ -133,7 +135,9 @@ function main() {
           ? path.join(outDir, "codex")
           : t === "vscode"
             ? path.join(outDir, "vscode")
-            : null;
+            : t === "opencode"
+              ? path.join(outDir, "opencode")
+              : null;
       if (p) fs.rmSync(p, { recursive: true, force: true });
     }
   }

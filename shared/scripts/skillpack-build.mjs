@@ -5,11 +5,17 @@ function usage() {
   process.stderr.write(
     [
       "Usage:",
-      "  node shared/scripts/skillpack-build.mjs [--out=dist] [--targets=codex,vscode] [--clean]",
+      "  node shared/scripts/skillpack-build.mjs [--out=dist] [--targets=codex,vscode,claude] [--skills=skill1,skill2] [--clean]",
       "",
       "Outputs:",
       "  - <out>/codex/.codex/skills/<skill>/SKILL.md",
       "  - <out>/vscode/.github/skills/<skill>/SKILL.md",
+      "  - <out>/claude/.claude/skills/<skill>/SKILL.md",
+      "",
+      "Options:",
+      "  --targets    Comma-separated list of targets (codex, vscode, claude). Default: codex,vscode,claude",
+      "  --skills     Comma-separated list of skill names to build. Default: all skills",
+      "  --clean      Remove target directories before building",
       "",
       "Notes:",
       "- Avoids symlinks (Codex ignores symlinked directories).",
@@ -19,12 +25,13 @@ function usage() {
 }
 
 function parseArgs(argv) {
-  const args = { out: "dist", targets: ["codex", "vscode"], clean: false };
+  const args = { out: "dist", targets: ["codex", "vscode", "claude"], skills: [], clean: false };
   for (const a of argv) {
     if (a === "--help" || a === "-h") args.help = true;
     else if (a === "--clean") args.clean = true;
     else if (a.startsWith("--out=")) args.out = a.slice("--out=".length);
     else if (a.startsWith("--targets=")) args.targets = a.slice("--targets=".length).split(",").filter(Boolean);
+    else if (a.startsWith("--skills=")) args.skills = a.slice("--skills=".length).split(",").filter(Boolean);
     else {
       process.stderr.write(`Unknown arg: ${a}\n`);
       args.help = true;
@@ -91,6 +98,7 @@ function buildTarget({ repoRoot, outDir, target, skillDirs }) {
   const rootByTarget = {
     codex: path.join(outDir, "codex", ".codex", "skills"),
     vscode: path.join(outDir, "vscode", ".github", "skills"),
+    claude: path.join(outDir, "claude", ".claude", "skills"),
   };
   const destSkillsRoot = rootByTarget[target];
   assert(destSkillsRoot, `Unknown target: ${target}`);
@@ -107,6 +115,8 @@ function buildTarget({ repoRoot, outDir, target, skillDirs }) {
   process.stdout.write(`OK: built ${target} skillpack at ${rel}\n`);
 }
 
+const VALID_TARGETS = ["codex", "vscode", "claude"];
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
@@ -118,23 +128,31 @@ function main() {
   const skillsRoot = path.join(repoRoot, "skills");
   const outDir = path.isAbsolute(args.out) ? args.out : path.join(repoRoot, args.out);
 
-  const skillDirs = listSkillDirs(skillsRoot);
+  let skillDirs = listSkillDirs(skillsRoot);
   assert(skillDirs.length > 0, "No skills found under ./skills");
+
+  // Filter skills if --skills was specified
+  if (args.skills.length > 0) {
+    const requestedSkills = new Set(args.skills);
+    const availableSkills = skillDirs.map((d) => path.basename(d));
+
+    // Validate requested skills exist
+    for (const s of requestedSkills) {
+      assert(availableSkills.includes(s), `Unknown skill: ${s}. Available: ${availableSkills.join(", ")}`);
+    }
+
+    skillDirs = skillDirs.filter((d) => requestedSkills.has(path.basename(d)));
+  }
 
   const targets = [...new Set(args.targets)];
   for (const t of targets) {
-    assert(t === "codex" || t === "vscode", `Invalid target: ${t}`);
+    assert(VALID_TARGETS.includes(t), `Invalid target: ${t}. Valid targets: ${VALID_TARGETS.join(", ")}`);
   }
 
   if (args.clean) {
     for (const t of targets) {
-      const p =
-        t === "codex"
-          ? path.join(outDir, "codex")
-          : t === "vscode"
-            ? path.join(outDir, "vscode")
-            : null;
-      if (p) fs.rmSync(p, { recursive: true, force: true });
+      const targetDir = path.join(outDir, t);
+      fs.rmSync(targetDir, { recursive: true, force: true });
     }
   }
 

@@ -1,0 +1,23 @@
+{
+  "name": "Build a DataViews table with filters and actions",
+  "skills": ["wordpress-router", "wp-project-triage", "wp-dataviews"],
+  "query": "Add a DataViews table to a WordPress plugin admin screen to browse pages with search, author/status filters, sorting, pagination, and bulk delete action.",
+  "expected_behavior": [
+    "Step 1: Route with wordpress-router to identify repo type",
+    "Step 2: Use wp-project-triage to detect build tooling and version constraints",
+    "Step 3: Choose DataViews and confirm correct import path (@wordpress/dataviews/wp when using @wordpress/scripts)",
+    "Step 4: Define data shape and id strategy (id field or getItemId)",
+    "Step 5: Define fields with types, filters, and sorting configuration",
+    "Step 6: Build a view config for search, filters, sort, perPage, and page",
+    "Step 7: Provide actions with supportsBulk for selection and implement callbacks",
+    "Step 8: Map view to server queries or use filterSortAndPaginate for client-side data",
+    "Step 9: Verify sorting/filtering/pagination and action execution"
+  ],
+  "success_criteria": [
+    "Uses DataViews with the correct import path",
+    "Defines fields and view config aligned by field ids",
+    "Implements bulk action and selection correctly",
+    "Explains how view changes update the data source",
+    "Includes verification steps for filters, sort, and pagination"
+  ]
+}

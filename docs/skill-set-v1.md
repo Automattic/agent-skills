@@ -8,6 +8,7 @@ This repo currently includes:
 - `wp-block-themes`
 - `wp-plugin-development`
 - `wp-interactivity-api`
+- `wp-dataviews`
 - `wp-abilities-api`
 - `wp-wpcli-and-ops`
 - `wp-performance`

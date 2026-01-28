@@ -9,6 +9,7 @@ This repo currently includes:
 - `wp-plugin-development`
 - `wp-rest-api`
 - `wp-interactivity-api`
+- `wp-dataviews`
 - `wp-abilities-api`
 - `wp-wpcli-and-ops`
 - `wp-performance`

@@ -27,6 +27,7 @@ Agent Skills solve this by giving AI assistants **expert-level WordPress knowled
 | **wp-plugin-development** | Plugin architecture, hooks, settings API, security |
 | **wp-rest-api** | REST API routes/endpoints, schema, auth, and response shaping |
 | **wp-interactivity-api** | Frontend interactivity with `data-wp-*` directives and stores |
+| **wp-dataviews** | DataViews components: DataViews, DataViewsPicker, DataForm, fields/actions/filters |
 | **wp-abilities-api** | Capability-based permissions and REST API authentication |
 | **wp-wpcli-and-ops** | WP-CLI commands, automation, multisite, search-replace |
 | **wp-performance** | Profiling, caching, database optimization, Server-Timing |
